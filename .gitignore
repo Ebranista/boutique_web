@@ -37,6 +37,7 @@ instance/
 .env.local
 *.env
 test_api.py
+reqs.txt
 
 # Database
 *.db
