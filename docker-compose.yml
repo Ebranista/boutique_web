@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: boutique_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: boutique_db
+      MYSQL_USER: boutique_user
+      MYSQL_PASSWORD: boutique_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - boutique_network
+
+  backend:
+    build: .
+    container_name: boutique_backend
+    environment:
+      FLASK_ENV: production
+      DATABASE_URL: mysql+pymysql://boutique_user:boutique_password@db:3306/boutique_db
+      SECRET_KEY: your-production-secret-key
+      JWT_SECRET_KEY: your-jwt-secret-key
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    volumes:
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    networks:
+      - boutique_network
+
+volumes:
+  mysql_data:
+
+networks:
+  boutique_network:
+    driver: bridge
